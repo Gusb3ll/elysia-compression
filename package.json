@@ -1,0 +1,42 @@
+{
+  "name": "elysia-compression",
+  "version": "0.0.1",
+  "description": "Compression plugin for Elysia",
+  "author": {
+    "name": "Gusb3ll",
+    "url": "https://github.com/gusb3ll",
+    "email": "contact@gusbell.tech"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gusb3ll/elysia-compression"
+  },
+  "exports": {
+    "bun": "./dist/index.js",
+    "node": "./dist/cjs/index.js",
+    "require": "./dist/cjs/index.js",
+    "import": "./dist/index.js",
+    "default": "./dist/cjs/index.js"
+  },
+  "types": "./src/index.ts",
+  "url": "https://github.com/gusb3ll/elysia-compression",
+  "keywords": [
+    "elysia",
+    "compression"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "dev": "bun run --hot example/index.ts",
+    "build": "rm -rf dist && tsc --project tsconfig.esm.json",
+    "release": "npm run build && npm publish --access public"
+  },
+  "devDependencies": {
+    "bun-types": "0.6.13",
+    "elysia": "0.5.20",
+    "eslint": "8.26.0",
+    "typescript": "5.1.6"
+  },
+  "peerDependencies": {
+    "elysia": ">= 0.5.20"
+  }
+}
