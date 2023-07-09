@@ -1,40 +1,39 @@
 import type { Elysia } from 'elysia'
-import type { ZlibCompressionOptions } from 'bun'
+import { deflateSync, gzipSync, type ZlibCompressionOptions } from 'bun'
 
 interface CompressionOptions {
-      /**
+    /**
      * @default `gzip`
      *
      * Algorithm to use for compression.
      */
-  type: 'gzip' | 'deflate'
-  options?: ZlibCompressionOptions
+    type: 'gzip' | 'deflate'
+    options?: ZlibCompressionOptions
 }
 
-export const compression = ({ type = 'gzip', options }: CompressionOptions = { type: 'gzip' }) => (app: Elysia) => {
-  if (type === 'gzip') {
-    return app.onAfterHandle((_, res) => {
-      const buf = Buffer.from(JSON.stringify(res),)
-      const compressed = Bun.gzipSync(buf, options)  
+const toBuffer = (res: unknown) =>
+    Buffer.from(
+        typeof res === 'object'
+            ? JSON.stringify(res)
+            : res?.toString() ?? new String(res)
+    )
 
-      return new Response(compressed, {
-        headers: {
-          'Content-Encoding': 'gzip',
-        }
-      })
-    })
-  } else if (type === 'deflate') {
-        return app.onAfterHandle((_, res) => {
-      const buf = Buffer.from(JSON.stringify(res),)
-      const compressed = Bun.deflateSync(buf, options)  
+export const compression =
+    ({ type = 'gzip', options }: CompressionOptions = { type: 'gzip' }) =>
+    (app: Elysia) => {
+        if (type === 'gzip') {
+            return app.onAfterHandle(({ set }, res) => {
+                set.headers['Content-Encoding'] = 'gzip'
 
-      return new Response(compressed, {
-        headers: {
-          'Content-Encoding': 'deflate',
+                return new Response(gzipSync(toBuffer(res), options), set)
+            })
+        } else if (type === 'deflate') {
+            return app.onAfterHandle(({ set }, res) => {
+                set.headers['Content-Encoding'] = 'deflate'
+
+                return new Response(deflateSync(toBuffer(res)), set)
+            })
+        } else {
+            throw new Error('Invalid compression type.')
         }
-      })
-    })
-  } else {
-    throw new Error('Invalid compression type.')
-  }
-}
+    }
