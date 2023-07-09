@@ -3,10 +3,11 @@ import { compression } from '../src/index'
 
 const app = new Elysia()
     .use(compression())
-    .post('/', () => ({ value: 'Hello, World!' }))
+    .post('/', ({ set }) => ({ value: 'Hello, World!' }))
     .listen(3000)
 
-console.log(`Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
+console.log(
+    `Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
+)
 
 export type App = typeof app
-console.log('Server is running on port 3000.')

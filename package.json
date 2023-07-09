@@ -1,6 +1,6 @@
 {
   "name": "elysia-compression",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Compression plugin for Elysia",
   "author": {
     "name": "Gusb3ll",
@@ -27,7 +27,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "bun run --hot example/index.ts",
-    "build": "rm -rf dist && tsc --project tsconfig.esm.json",
+    "build": "rm -rf dist && tsc --project tsconfig.esm.json && tsc --project tsconfig.cjs.json",
+    "test": "bun test",
     "release": "npm run build && npm publish --access public"
   },
   "devDependencies": {
@@ -37,6 +38,6 @@
     "typescript": "5.1.6"
   },
   "peerDependencies": {
-    "elysia": ">= 0.5.20"
+    "elysia": ">= 0.5.22"
   }
 }
