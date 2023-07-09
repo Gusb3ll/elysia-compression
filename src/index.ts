@@ -1,5 +1,5 @@
 import type { Elysia } from 'elysia'
-import { deflateSync, gzipSync, type ZlibCompressionOptions } from 'bun'
+import { gzipSync, deflateSync ,type ZlibCompressionOptions } from 'bun'
 
 interface CompressionOptions {
     /**
@@ -24,14 +24,16 @@ export const compression =
         if (type === 'gzip') {
             return app.onAfterHandle(({ set }, res) => {
                 set.headers['Content-Encoding'] = 'gzip'
+                const compressed = gzipSync(toBuffer(res), options)
 
-                return new Response(gzipSync(toBuffer(res), options), set)
+                return new Response(compressed, set)
             })
         } else if (type === 'deflate') {
             return app.onAfterHandle(({ set }, res) => {
                 set.headers['Content-Encoding'] = 'deflate'
+                const compressed = deflateSync(toBuffer(res), options)
 
-                return new Response(deflateSync(toBuffer(res)), set)
+                return new Response(compressed, set)
             })
         } else {
             throw new Error('Invalid compression type.')
