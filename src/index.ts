@@ -22,18 +22,17 @@ export const compression =
     ({ type = 'gzip', options }: CompressionOptions = { type: 'gzip' }) =>
     (app: Elysia) => {
         if (type === 'gzip') {
-            return app.onAfterHandle(({ set }, res) => {
-                set.headers['Content-Encoding'] = 'gzip'
-                const compressed = gzipSync(toBuffer(res), options)
-
-                return new Response(compressed, set)
+            return app.onAfterHandle((context) => {
+                context.set.headers['Content-Encoding'] = 'gzip';
+                const compressed = gzipSync(toBuffer(context.response), options);
+                context.response = new Response(compressed, context as any);
             })
         } else if (type === 'deflate') {
-            return app.onAfterHandle(({ set }, res) => {
-                set.headers['Content-Encoding'] = 'deflate'
-                const compressed = deflateSync(toBuffer(res), options)
+            return app.onAfterHandle((context) => {
+                context.set.headers['Content-Encoding'] = 'deflate';
+                const compressed = deflateSync(toBuffer(context.response), options);
+                context.response = new Response(compressed, context as any);
 
-                return new Response(compressed, set)
             })
         } else {
             throw new Error('Invalid compression type.')
