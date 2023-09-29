@@ -29,15 +29,24 @@
     "dev": "bun run --hot example/index.ts",
     "build": "rm -rf dist && tsc --project tsconfig.esm.json && tsc --project tsconfig.cjs.json",
     "test": "bun test",
-    "release": "npm run build && npm publish --access public"
+    "release": "npm run build && npm publish --access public",
+    "fmt": "prettier --write ."
   },
   "devDependencies": {
     "bun-types": "1.0.3",
     "elysia": "0.7.15",
     "eslint": "8.50.0",
+    "prettier": "^3.0.3",
     "typescript": "5.2.2"
   },
   "peerDependencies": {
     "elysia": ">= 0.7.15"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "semi": false,
+    "arrowParens": "avoid"
   }
 }
