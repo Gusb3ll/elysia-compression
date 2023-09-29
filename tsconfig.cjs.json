@@ -1,17 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": [
-      "ESNext",
-      "DOM",
-      "ScriptHost"
-    ],
+    "lib": ["ESNext", "DOM", "ScriptHost"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "baseUrl": "./src",
-    "types": [
-      "bun-types"
-    ],
+    "types": ["bun-types"],
     "declaration": true,
     "outDir": "./dist/cjs",
     "removeComments": true,
@@ -20,7 +14,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

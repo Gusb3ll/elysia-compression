@@ -12,29 +12,33 @@ const response = `
 そんなふうに私も思ってみたい`
 
 describe('Compression', () => {
-    it('handle gzip compression', async () => {
-        const app = new Elysia().use(compression()).get('/', () => response)
-        const res = await app.handle(req())
+  it('handle gzip compression', async () => {
+    const app = new Elysia().use(compression()).get('/', () => response)
+    const res = await app.handle(req())
 
-        expect(res.headers.get('Content-Encoding')).toBe('gzip')
-    })
+    expect(res.headers.get('Content-Encoding')).toBe('gzip')
+  })
 
-    it('handle deflate compression', async () => {
-        const app = new Elysia().use(compression({ 'type': 'deflate' })).get('/', () => response)
-        const res = await app.handle(req())
+  it('handle deflate compression', async () => {
+    const app = new Elysia()
+      .use(compression({ type: 'deflate' }))
+      .get('/', () => response)
+    const res = await app.handle(req())
 
-        expect(res.headers.get('Content-Encoding')).toBe('deflate')
-    })
+    expect(res.headers.get('Content-Encoding')).toBe('deflate')
+  })
 
-    it('accept additional headers', async () => {
-        const app = new Elysia().use(compression({ 'type': 'deflate' })).get('/', ({ set }) => {
-            set.headers['x-powered-by'] = 'Elysia'
+  it('accept additional headers', async () => {
+    const app = new Elysia()
+      .use(compression({ type: 'deflate' }))
+      .get('/', ({ set }) => {
+        set.headers['x-powered-by'] = 'Elysia'
 
-            return response
-        })
-        const res = await app.handle(req())
+        return response
+      })
+    const res = await app.handle(req())
 
-        expect(res.headers.get('Content-Encoding')).toBe('deflate')
-        expect(res.headers.get('x-powered-by')).toBe('Elysia')
-    })
+    expect(res.headers.get('Content-Encoding')).toBe('deflate')
+    expect(res.headers.get('x-powered-by')).toBe('Elysia')
+  })
 })

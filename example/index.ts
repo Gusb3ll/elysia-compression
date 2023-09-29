@@ -2,12 +2,12 @@ import { Elysia } from 'elysia'
 import { compression } from '../src/index'
 
 const app = new Elysia()
-    .use(compression())
-    .post('/', ({ set }) => ({ value: 'Hello, World!' }))
-    .listen(3000)
+  .use(compression())
+  .all('/', () => ({ value: 'Hello, World!' }))
+  .listen(4000)
 
 console.log(
-    `Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
+  `Elysia is running at http://${app.server?.hostname}:${app.server?.port}`,
 )
 
 export type App = typeof app
