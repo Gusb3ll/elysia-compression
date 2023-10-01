@@ -1,6 +1,6 @@
 {
   "name": "elysia-compression",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Compression plugin for Elysia",
   "author": {
     "name": "Gusb3ll",
@@ -32,7 +32,11 @@
     "release": "npm run build && npm publish --access public",
     "fmt": "prettier --write ."
   },
+  "dependencies": {
+    "compressible": "2.0.18"
+  },
   "devDependencies": {
+    "@types/compressible": "2.0.0",
     "bun-types": "1.0.3",
     "elysia": "0.7.15",
     "eslint": "8.50.0",
