@@ -4,6 +4,7 @@ import { compression } from '../src/index'
 const app = new Elysia()
   .use(compression())
   .all('/', () => ({ value: 'Hello, World!' }))
+  .all('/text', () => 'a')
   .listen(4000)
 
 console.log(
