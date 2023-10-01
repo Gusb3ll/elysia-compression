@@ -81,4 +81,29 @@ describe('Compression', () => {
 
     expect(res.headers.get('Content-Type')).toBe('image/jpeg')
   })
+    it('handle gzip compression', async () => {
+        const app = new Elysia().use(compression()).get('/', () => response)
+        const res = await app.handle(req())
+
+        expect(res.headers.get('Content-Encoding')).toBe('gzip')
+    })
+
+    it('handle deflate compression', async () => {
+        const app = new Elysia().use(compression({ 'type': 'deflate' })).get('/', () => response)
+        const res = await app.handle(req())
+
+        expect(res.headers.get('Content-Encoding')).toBe('deflate')
+    })
+
+    it('accept additional headers', async () => {
+        const app = new Elysia().use(compression({ 'type': 'deflate' })).get('/', ({ set }) => {
+            set.headers['x-powered-by'] = 'Elysia'
+
+            return response
+        })
+        const res = await app.handle(req())
+
+        expect(res.headers.get('Content-Encoding')).toBe('deflate')
+        expect(res.headers.get('x-powered-by')).toBe('Elysia')
+    })
 })

@@ -7,3 +7,8 @@ Feature:
 Bug fix:
 
 - inherits response headers
+Feature:
+- add CommonJS support for using in Nodejs
+
+Bug fix:
+- inherits response headers
