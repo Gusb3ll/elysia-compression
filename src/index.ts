@@ -1,6 +1,8 @@
 import compressible from 'compressible'
 import { Elysia, mapResponse } from 'elysia'
 import { gzipSync, deflateSync, type ZlibCompressionOptions } from 'bun'
+import { CompressionStream } from './stream'
+import { isReadableStream } from './utils'
 // import { brotliCompressSync, BrotliOptions } from 'zlib'
 
 export type CompressionOptions = {
@@ -50,67 +52,41 @@ export const compression = (
     name: 'elysia-compression',
   })
 
-  switch (type) {
-    case 'gzip':
-      return app.onAfterHandle(ctx => {
-        ctx.set.headers['Content-Encoding'] = 'gzip'
-        const res = mapResponse(ctx.response, {
-          status: 200,
-          headers: {},
-        })
-        if (!res.headers.get('Content-Type')) {
-          res.headers.set('Content-Type', 'text/plain')
-        }
-        if (!shouldCompress(res)) {
-          delete ctx.set.headers['Content-Encoding']
-          return ctx.response
-        }
-
-        const compressed = gzipSync(
-          toBuffer(ctx.response, encoding),
-          options as ZlibCompressionOptions,
-        )
-        const response = new Response(compressed, {
-          headers: res.headers,
-        })
-
-        ctx.response = response
-      })
-
-    case 'deflate':
-      return app.onAfterHandle(ctx => {
-        ctx.set.headers['Content-Encoding'] = 'deflate'
-        const res = mapResponse(ctx.response, {
-          status: 200,
-          headers: {},
-        })
-        if (!res.headers.get('Content-Type')) {
-          res.headers.set('Content-Type', 'text/plain')
-        }
-        if (!shouldCompress(res)) {
-          delete ctx.set.headers['Content-Encoding']
-          return ctx.response
-        }
-
-        const compressed = deflateSync(
-          toBuffer(ctx.response, encoding),
-          options as ZlibCompressionOptions,
-        )
-        const response = new Response(compressed, {
-          headers: res.headers,
-        })
-
-        ctx.response = response
-      })
-
-    // case 'brotli':
-    //     return app.onAfterHandle((ctx) => {
-    //     ctx.set.headers['Content-Encoding'] = 'br';
-    //     const compressed = brotliCompressSync(toBuffer(ctx.response, encoding), options as BrotliOptions);
-    //     ctx.response = new Response(compressed, ctx as any);
-    //     })
-
-    default:
-      throw new Error('Invalid compression type.')
+  if (!['gzip', 'deflate'].includes(type)) {
+    throw new Error('Invalid compression type. Use gzip or deflate.')
   }
+
+  return app.onAfterHandle(ctx => {
+    ctx.set.headers['Content-Encoding'] = type
+
+    const res = mapResponse(ctx.response, {
+      status: 200,
+      headers: {},
+    })
+
+    if (!res.headers.get('Content-Type')) {
+      res.headers.set('Content-Type', 'text/plain')
+    }
+
+    if (!shouldCompress(res)) {
+      delete ctx.set.headers['Content-Encoding']
+      return ctx.response
+    }
+
+    const stream = ctx.response?.stream
+    const compressedBody = isReadableStream(stream)
+      ? stream.pipeThrough(new CompressionStream(type))
+      : type === 'gzip'
+        ? gzipSync(
+          toBuffer(ctx.response, encoding),
+          options as ZlibCompressionOptions,
+        )
+        : deflateSync(
+          toBuffer(ctx.response, encoding),
+          options as ZlibCompressionOptions,
+        )
+    ctx.response = new Response(compressedBody, {
+      headers: res.headers,
+    })
+  })
 }
