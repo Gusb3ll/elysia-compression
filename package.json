@@ -1,6 +1,6 @@
 {
   "name": "elysia-compression",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Compression plugin for Elysia",
   "author": {
     "name": "Gusb3ll",
@@ -36,12 +36,12 @@
     "compressible": "2.0.18"
   },
   "devDependencies": {
-    "@elysiajs/stream": "^0.7.2",
+    "@elysiajs/stream": "0.7.2",
     "@types/compressible": "2.0.0",
     "bun-types": "1.0.14",
     "elysia": "0.7.29",
     "eslint": "8.54.0",
-    "prettier": "^3.1.0",
+    "prettier": "3.1.0",
     "typescript": "5.3.2"
   },
   "peerDependencies": {
