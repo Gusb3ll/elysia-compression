@@ -25,8 +25,8 @@ export class CompressionStream {
     })
 
     this.writable = new WritableStream({
-      write: (chunk: Uint8Array) => handle.write(chunk),
-      close: () => handle.end(),
+      write: (chunk: Uint8Array) => handle.write(chunk) as any,
+      close: () => handle.end() as any,
     })
   }
 }

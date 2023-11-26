@@ -73,7 +73,7 @@ export const compression = (
       return ctx.response
     }
 
-    const stream = ctx.response?.stream
+    const stream = (ctx as any).response?.stream
     const compressedBody = isReadableStream(stream)
       ? stream.pipeThrough(new CompressionStream(type))
       : type === 'gzip'
